@@ -1,0 +1,41 @@
+/* WebSerial.css */
+.serial-container {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.title {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.connect-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.connect-button:hover {
+    background-color: #0056b3;
+}
+
+.output-console {
+    background: black;
+    color: limegreen;
+    padding: 15px;
+    border-radius: 5px;
+    height: 200px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    margin-top: 20px;
+    border: 1px solid #333;
+}

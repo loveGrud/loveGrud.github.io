@@ -1,0 +1,42 @@
+import React, { useState } from 'react';
+import './webserial.css';
+
+const WebSerial = () => {
+    const [output, setOutput] = useState('');
+    const [connectionStatus, setConnectionStatus] = useState('Desconectado');
+    let port = null;
+    let reader = null;
+
+    const connectSerial = async () => {
+        try {
+            port = await navigator.serial.requestPort();
+            console.log(port.getInfo()); //ubproduct usb vendedorid
+            await port.open({ baudRate: 9600});
+            reader = port.readable.getReader();
+            setConnectionStatus('Conectado');
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                const decodedValue = new TextDecoder().decode(value);
+                console.log('Received Data:', decodedValue);
+              //  console.log(typeof(decodedValue))
+                setOutput(prevOutput => prevOutput + decodedValue);
+                
+            }
+        } catch (error) {
+            console.error('Error al conectar:', error);
+            setConnectionStatus('Error de conexión');
+        }
+    };
+    return (
+        <div className="serial-container">
+            <h1 className="title">Web Serial API</h1>
+            <button className="connect-button" onClick={connectSerial}>Conectar al Puerto Serial</button>
+            <p>Status: {connectionStatus}</p>
+            <pre className="output-console">{output}</pre>
+        </div>
+    );
+};
+
+export default WebSerial;
