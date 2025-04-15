@@ -1,48 +1,42 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Serial</title>
+  <title>MQTT wss Test</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 <body>
-    <h1> Web Serial API</h1>
-    <button id="connect">Conectar al Puerto Serial</button>
-    <pre id="output"></pre>
+  <h2>MQTT sobre WSS</h2>
+  <div id="status">Conectando...</div>
+  <script>
+    const options = {
+      username: 'usuario', // opcional
+      password: 'contraseña', // opcional
+      reconnectPeriod: 1000,
+      connectTimeout: 4000,
+      clean: true
+    };
 
-    <script>
-        let port;
-        let writer;
+    // Reemplazá la IP y puerto con los que uses para wss
+    const client = mqtt.connect('wss://10.30.10.113:8084/mqtt', options);
 
-        document.getElementById('connect').addEventListener('click', async () => {
-            try {
-                port = await navigator.serial.requestPort();
-                await port.open({ baudRate: 9600 });
-                writer = port.writable.getWriter();
+    client.on('connect', () => {
+      document.getElementById('status').innerText = '✅ Conectado al broker MQTT por wss';
+      console.log('Conectado!');
+    });
 
-                const reader = port.readable.getReader();
-                const outputElement = document.getElementById('output');
+    client.on('error', (err) => {
+      document.getElementById('status').innerText = '❌ Error de conexión';
+      console.error('Error de conexión:', err);
+    });
 
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
-                    const decodedValue = new TextDecoder().decode(value);
-                    outputElement.textContent += decodedValue + '\n';
-                }
-            } catch (error) {
-                console.error('Error al conectar:', error);
-            }
-        });
+    client.on('reconnect', () => {
+      document.getElementById('status').innerText = '🔄 Reintentando conexión...';
+    });
 
-     /*   document.getElementById('send').addEventListener('click', async () => {
-            try {
-                const data = "Hola CircuitPython!\n";
-                await writer.write(new TextEncoder().encode(data));
-                console.log('Datos enviados:', data);
-            } catch (error) {
-                console.error('Error al enviar datos:', error);
-            }
-        });*/
-    </script>
+    client.on('close', () => {
+      document.getElementById('status').innerText = '🚫 Conexión cerrada';
+    });
+  </script>
 </body>
 </html>
+
